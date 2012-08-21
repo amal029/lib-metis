@@ -8,8 +8,8 @@ module Hashtbl = Batteries.Hashtbl
 
 let num_nodes = ref 0
 let num_edges = ref 0
-let format = "011"
-let constraints = "1"
+let format = ref "011"
+let constraints = ref "1"
 
 (* The main list *)
 let ml = ref []
@@ -31,18 +31,18 @@ let update_num_edge = function
       | _ -> num_edges := !num_edges + 1
 
 (* Debug code *)
-let print_list = function
-  | Seq (_,x,y,_) -> print_endline ("Seq" ^ " " ^ (string_of_int x) ^ " " ^ (string_of_int y))
-  | Join (_,x,y,_) -> print_endline ("Join" ^ " " ^ (string_of_int x) ^ " " ^ (string_of_int y))
-  | Split (_,x,y,_) -> print_endline ("Split" ^ " " ^ (string_of_int x) ^ " " ^ (string_of_int y))
-  | Empty -> print_endline "empty"
+(* let print_list = function *)
+(*   | Seq (_,x,y,_) -> print_endline ("Seq" ^ " " ^ (string_of_int x) ^ " " ^ (string_of_int y)) *)
+(*   | Join (_,x,y,_) -> print_endline ("Join" ^ " " ^ (string_of_int x) ^ " " ^ (string_of_int y)) *)
+(*   | Split (_,x,y,_) -> print_endline ("Split" ^ " " ^ (string_of_int x) ^ " " ^ (string_of_int y)) *)
+(*   | Empty -> print_endline "empty" *)
 
 let get_node_num node =
   match List.index_of node (List.rev !ml) with
     | Some x -> 
       (* DEBUG *)
       let () = IFDEF DEBUG THEN print_endline ("Printing : " ^ (string_of_int x)) ELSE () ENDIF in
-      string_of_int (x+1) (* (Hashtbl.find nums node) *)
+      string_of_int (x+1)
     | None -> (match node with 
 	| Empty -> " "
 	| _ -> raise (Internal_compiler_error "Cannot associate a node num !!"))
@@ -56,8 +56,8 @@ let print_edge_connections i = function
 
 let add_to_hash parent = function
   | Edge (_,x) as s -> 
-    let ps2 = (match parent with | Seq(st,_,_,_) | Split (st,_,_,_) | Join (st,_,_,_) -> st | Empty -> "") in
-    let ps = (match x with | Seq(st,_,_,_) | Split (st,_,_,_) | Join (st,_,_,_) -> st | Empty -> "") in
+    let ps2 = (match parent with | Seq(st,_,_) | Split (st,_,_) | Join (st,_,_) -> st | Empty -> "empty") in
+    let ps = (match x with | Seq(st,_,_) | Split (st,_,_) | Join (st,_,_) -> st | Empty -> "empty") in
     let () = IFDEF DEBUG THEN print_endline ("Attaching parent: " ^ ps2)  ELSE () ENDIF in
     let () = IFDEF DEBUG THEN print_endline ("Child is:: " ^ ps)  ELSE () ENDIF in
     let allbs = Hashtbl.find_all cp x in
@@ -68,22 +68,22 @@ let add_to_hash parent = function
     else ()
 
 let rec fill_parents = function
-  | Split (_,_,_,l) as s -> let () = List.iter (add_to_hash s) l in List.iter (fun x -> fill_parents (get_edge_child x)) l
-  | Seq (_,_,_,e) | Join (_,_,_,e) as s -> let () = add_to_hash s e in fill_parents (get_edge_child e)
+  | Split (_,_,l) as s -> let () = List.iter (add_to_hash s) l in List.iter (fun x -> fill_parents (get_edge_child x)) l
+  | Seq (_,_,e) | Join (_,_,e) as s -> let () = add_to_hash s e in fill_parents (get_edge_child e)
   | Empty -> ()
 
 let print_nums = List.iteri (fun i x -> (match x with
-  | Seq (s,_,_,_) -> print_endline ("Seq " ^ s ^"---,---" ^ (string_of_int (i+1)))
-  | Split (s,_,_,_) -> print_endline ("Split " ^ s ^"---,---" ^ (string_of_int (i+1)))
-  | Join (s,_,_,_) -> print_endline ("Join " ^ s ^"---,---" ^ (string_of_int (i+1)))
+  | Seq (s,_,_) -> print_endline ("Seq " ^ s ^"---,---" ^ (string_of_int (i+1)))
+  | Split (s,_,_) -> print_endline ("Split " ^ s ^"---,---" ^ (string_of_int (i+1)))
+  | Join (s,_,_) -> print_endline ("Join " ^ s ^"---,---" ^ (string_of_int (i+1)))
   | _ -> ()))
 
 let rec fill_nums = function
-  | Split (_,_,_,l) as s -> 
+  | Split (_,_,l) as s -> 
     ml := s :: !ml;
     List.iteri (fun i x -> fill_nums (get_edge_child x)) l
 
-  | Seq (_,_,_,e) as s ->
+  | Seq (_,_,e) as s ->
     (try
        let lls = Hashtbl.find_all cp s in
        let () = List.iter (fun (parent,_) -> ignore (List.find ((=) parent) !ml)) lls in
@@ -92,7 +92,7 @@ let rec fill_nums = function
      with
        | Not_found -> ())
 
-  | Join (st,_,_,e) as s ->
+  | Join (st,_,e) as s ->
     (* Don't out it in if there already is one in there !! *)
     (try
        let lls = Hashtbl.find_all cp s in
@@ -104,15 +104,17 @@ let rec fill_nums = function
   | Empty -> ()
 
 let rec build_metis_file = function
-  | Split (st,w1,w2,edge_list) as s -> 
+  | Split (st,w,edge_list) as s -> 
     let () = IFDEF DEBUG THEN print_endline ("got a split node" ^ " " ^ st) ELSE () ENDIF in
     (* First increment the num_nodes *)
     num_nodes := !num_nodes + 1;
     (* Next increment the number of edges *)
     let () = List.iter update_num_edge edge_list in
     (* Next append your own weights *)
-    let w2 = if w2 = 0 then 1 else w2 in
-    let () = add_string buffer ((string_of_int (w1*w2)) ^ " ") in
+    (* let w2 = if w2 = 0 then 1 else w2 in *)
+    (* let () = add_string buffer ((string_of_int (w1*w2)) ^ " ") in *)
+    let () = List.iter (fun x -> add_string buffer ((string_of_int x) ^ " ")) w in
+    (* let () = add_string buffer ((string_of_int (List.fold_right ( * ) w 1)) ^ " ") in *)
     (* Next add the edges and their weights from this thing *)
     let () = List.iter (fun x -> print_edge_connections (get_node_num (match x with | Edge (_,x) -> x)) x) edge_list in 
     (* Make the edges for your own parents *)
@@ -131,15 +133,16 @@ let rec build_metis_file = function
     let () = IFDEF DEBUG THEN print_endline "got an empty node" ELSE () ENDIF in
     ()
 
-  | Join (st,w1,w2,edge) as s -> 
+  | Join (st,w,edge) as s -> 
     let () = IFDEF DEBUG THEN print_endline ("got a Join node " ^ st) ELSE () ENDIF in
     (* First increment the num_nodes *)
     num_nodes := !num_nodes + 1;
     (* Next increment the number of edges *)
     let () = update_num_edge edge in
     (* Next append your own weights *)
-    let w2 = if w2 = 0 then 1 else w2 in
-    let () = add_string buffer ((string_of_int (w1*w2)) ^ " ") in
+    (* let w2 = if w2 = 0 then 1 else w2 in *)
+    (* let () = add_string buffer ((string_of_int (w1*w2)) ^ " ") in *)
+    let () = List.iter (fun x -> add_string buffer ((string_of_int x) ^ " ")) w in
     (* Next add the edges and their weights from this thing *)
     let () = print_edge_connections (get_node_num (match edge with | Edge (_,x) -> x)) edge in 
     (* Make the edges for your own parents *)
@@ -154,15 +157,13 @@ let rec build_metis_file = function
      with
        | Not_found -> raise (Internal_compiler_error " I don't have a parent!!"))
 
-  | Seq (st,w1,w2,edge) as s -> 
+  | Seq (st,w,edge) as s -> 
     let () = IFDEF DEBUG THEN print_endline ("got a Seq node " ^ st) ELSE () ENDIF in
     (* First increment the num_nodes *)
     num_nodes := !num_nodes + 1;
     (* Next increment the number of edges *)
     let () = update_num_edge edge in
-    (* Next append your own weights *)
-    let w2 = if w2 = 0 then 1 else w2 in
-    let () = add_string buffer ((string_of_int (w1*w2)) ^ " ") in
+    let () = List.iter (fun x -> add_string buffer ((string_of_int x) ^ " ")) w in
     (* Next add the edges and their weights from this thing *)
     let () = print_edge_connections (get_node_num (match edge with | Edge (_,x) -> x)) edge in 
     (* Make the edges for your own parents *)
@@ -178,8 +179,10 @@ let rec build_metis_file = function
      with
        | Not_found -> raise (Internal_compiler_error " I don't have a parent!!"))
 
-let process file top_node = 
+let process c f file top_node = 
   (* Add a dummy parent for the top_node *)
+  format := f; 
+  constraints := c; 
   let () = Hashtbl.add cp top_node (Empty, Edge(None,Empty)) in
   let () = fill_parents top_node in
   let () = fill_nums top_node in
@@ -187,7 +190,7 @@ let process file top_node =
   let () = List.iter build_metis_file (List.rev !ml) in
   (* Now append the top line to a buffer and concate the 2 buffers *)
   let b1 = create 80 in
-  let () = add_string b1 ((string_of_int !num_nodes) ^ " " ^ (string_of_int !num_edges) ^ " " ^ format ^ " " ^ constraints ^ "\n") in
+  let () = add_string b1 ((string_of_int !num_nodes) ^ " " ^ (string_of_int !num_edges) ^ " " ^ !format ^ " " ^ !constraints ^ "\n") in
   let () = add_buffer b1 buffer in
   let ochan = open_out file in
   (* let ochan = BatIO.output_channel ochan ~cleanup:true in *)
