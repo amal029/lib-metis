@@ -32,4 +32,4 @@ test.native:
 
 
 clean:
-	rm -rf test test.native *.cmi *.cmo
+	rm -rf test test.native *.cmi *.cmo *.cmx *.o
