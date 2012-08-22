@@ -6,25 +6,20 @@ CCOPT=ocamlopt
 
 all: clean lib-metis.cma lib-metis.cmxa
 
-driver:
-	$(CC) -pp "camlp4o pa_macro.cmo -UDEBUG" driver.ml
-
-driver_opt:
-	$(CCOPT) -pp "camlp4o pa_macro.cmo -UDEBUG" driver.ml
 
 lib-metis.cma:
 	$(CC) -c metis.ml
 	$(CC) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBB) -c metisCodegen.ml
 	$(CC) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBB) -c metisParser.ml
 	$(CC) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBB) -c metisDriver.ml
-	$(CC) -a *.cmo -o $@
+	$(CC) -a metisParser.cmo metisCodegen.cmo metisDriver.cmo -o $@
 
 lib-metis.cmxa:
 	$(CCOPT) -c metis.ml
 	$(CCOPT) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBBOPT) -c metisCodegen.ml
 	$(CCOPT) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBBOPT) -c metisParser.ml
 	$(CCOPT) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBBOPT) -c metisDriver.ml
-	$(CCOPT) -a *.cmx -o $@
+	$(CCOPT) -a metisParser.cmx metisCodegen.cmx metisDriver.cmx -o $@
 
 
 clean:
