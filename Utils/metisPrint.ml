@@ -1,6 +1,5 @@
 open Metis
 
-
 let rec print_node = function
   | Seq (x,y,z) | Join (x,y,z) -> 
     let () = print_string ("Node id: " ^ x) in

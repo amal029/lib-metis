@@ -30,13 +30,6 @@ let update_num_edge = function
       | Empty -> ()
       | _ -> num_edges := !num_edges + 1
 
-(* Debug code *)
-(* let print_list = function *)
-(*   | Seq (_,x,y,_) -> print_endline ("Seq" ^ " " ^ (string_of_int x) ^ " " ^ (string_of_int y)) *)
-(*   | Join (_,x,y,_) -> print_endline ("Join" ^ " " ^ (string_of_int x) ^ " " ^ (string_of_int y)) *)
-(*   | Split (_,x,y,_) -> print_endline ("Split" ^ " " ^ (string_of_int x) ^ " " ^ (string_of_int y)) *)
-(*   | Empty -> print_endline "empty" *)
-
 let get_node_num node =
   match List.index_of node (List.rev !ml) with
     | Some x -> 
@@ -181,6 +174,11 @@ let rec build_metis_file = function
 
 let process c f file top_node = 
   (* Add a dummy parent for the top_node *)
+  num_nodes := 0;
+  num_edges := 0;
+  ml := [];
+  clear  buffer;
+  Hashtbl.clear cp;
   format := f; 
   constraints := c; 
   let () = Hashtbl.add cp top_node (Empty, Edge(None,Empty)) in

@@ -15,22 +15,22 @@ and edge =
   | E of int option * int option
 
 (* DEBUG *)
-let print_edge (E(x,y)) = 
-  let () = (match x with
-    | Some x -> print_string (" Edge weight: " ^ (string_of_int x) ^ " ") 
-    | None -> print_string ("1")) in
-  (match y with
-    | Some x -> print_string (" Edge connection:" ^ (string_of_int x) ^ " ") 
-    | None -> print_string "Empty")
+(* let print_edge (E(x,y)) =  *)
+(*   let () = (match x with *)
+(*     | Some x -> print_string (" Edge weight: " ^ (string_of_int x) ^ " ")  *)
+(*     | None -> print_string ("1")) in *)
+(*   (match y with *)
+(*     | Some x -> print_string (" Edge connection:" ^ (string_of_int x) ^ " ")  *)
+(*     | None -> print_string "Empty") *)
 
-(* DEBUG *)
-let print_node (S(x,y,z)) =
-  let () = print_string ("Id: " ^ x) in
-  let () = print_string (" Weights : ") in 
-  let () = List.iter (fun y -> (print_string ((string_of_int y) ^ " "))) y in
-  let () = print_string ("Conn indices : ") in 
-  let () = List.iter print_edge !z in 
-  print_endline "\n"
+(* (\* DEBUG *\) *)
+(* let print_node (S(x,y,z)) = *)
+(*   let () = print_string ("Id: " ^ x) in *)
+(*   let () = print_string (" Weights : ") in  *)
+(*   let () = List.iter (fun y -> (print_string ((string_of_int y) ^ " "))) y in *)
+(*   let () = print_string ("Conn indices : ") in  *)
+(*   let () = List.iter print_edge !z in  *)
+(*   print_endline "\n" *)
 
 let get_node_weights constraints ss =
   let ss = String.nsplit ss " " in
