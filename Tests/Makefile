@@ -16,6 +16,7 @@ UNIXLIB=unix.cma
 UNIXLIBOPT=unix.cmxa
 BIGARRAYLIB=bigarray.cma
 BIGARRAYLIBOPT=bigarray.cmxa
+METISLDIR=/macports-1.9.1/lib
 
 all: clean test test.native
 
@@ -23,12 +24,12 @@ all: clean test test.native
 test:
 	$(CC) -I $(METISDIR) -I $(METISUTILDIR) -c parse_metis_file.ml
 	$(CC) -I $(METISDIR) -I $(METISUTILDIR) -I $(OTHERSDIR) -I $(BATTERIES) $(NUMSLIB) $(UNIXLIB) $(BIGARRAYLIB) \
-	$(BATLIBB) $(LIBMETIS) $(METISUTIL) parse_metis_file.cmo -o $@
+	$(BATLIBB) $(LIBMETIS) $(METISUTIL) -I $(METISLDIR) parse_metis_file.cmo -o $@
 
 test.native:
 	$(CCOPT) -I $(OTHERSDIR) -I $(METISDIR) -I $(METISUTILDIR) -I	\
 	$(BATTERIES) $(BIGARRAYLIBOPT) $(NUMSLIBOPT) $(UNIXLIBOPT)	\
-	 $(BATLIBBOPT) $(LIBMETISN) $(METISUTILN) parse_metis_file.ml -o $@
+	 $(BATLIBBOPT) $(LIBMETISN) $(METISUTILN) -I $(METISLDIR) parse_metis_file.ml -o $@
 
 
 clean:
