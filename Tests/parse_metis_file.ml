@@ -21,3 +21,19 @@ for i = 0 to Array.length vwgt -1 do
   print_int vwgt.(i); print_string " ";
 done;
 print_endline "\n";
+
+(* Convert all to nativeints *)
+let nvtxs = Nativeint.of_int nvtxs in
+let ncon  = Nativeint.of_int ncon in
+let xadj = Array.map Nativeint.of_int xadj in
+let adjncy = Array.map Nativeint.of_int adjncy in
+let adjwgt = Array.map Nativeint.of_int adjwgt in
+let vsize = Array.map Nativeint.of_int vsize in
+let vwgt = Array.map Nativeint.of_int vwgt in
+
+(* Lets try doing some real partitoning now!! *)
+let (objval,part) = Metis.metis_PartGraphKWay nvtxs ncon xadj adjncy vwgt vsize adjwgt (Nativeint.of_int 4) [||] [||] in
+let () = print_endline (" Objective value: " ^ (Nativeint.to_string objval)) in
+for i = 0 to Array.length part - 1 do
+  print_endline ("(i:part) = " ^ (string_of_int (i+1)) ^ " : " ^ (Nativeint.to_string part.(i))) 
+done

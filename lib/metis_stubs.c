@@ -13,12 +13,9 @@ get_real_array_values (value val, real_t *array) {
   /* Now get the arrays in*/
   if (Tag_val (val) == Double_array_tag){
     int i =0;
-    if (Wosize_val(val) == 0) array = NULL;
-    else {
-      for (i=0; i<Wosize_val(val);++i){
-	/* Get the values */
-	array[i] = Double_field(val,i);
-      }
+    for (i=0; i<Wosize_val(val);++i){
+      /* Get the values */
+      array[i] = Double_field(val,i);
     }
   }
   CAMLreturn0;
@@ -30,12 +27,9 @@ get_array_values (value val, idx_t *array) {
   /* Now get the arrays in*/
   if (Tag_val (val) == 0){
     int i =0;
-    if (Wosize_val(val) == 0) array = NULL;
-    else {
-      for (i=0; i<Wosize_val(val);++i){
-	/* Get the values */
-	array[i] = Nativeint_val(Field(val,i));
-      }
+    for (i=0; i<Wosize_val(val);++i){
+      /* Get the values */
+      array[i] = Nativeint_val(Field(val,i));
     }
   }
   CAMLreturn0;
@@ -85,33 +79,33 @@ Metis_PartGraphRecursiveBytecode (value *argv, int argn) {
     /* Use mallocs, because things might overflow!! */
 
     /* Getting xadj */
-    idx_t *xadj = (idx_t*)(malloc(sizeof(Wosize_val(argv[2])*sizeof(idx_t))));
+    idx_t *xadj = (idx_t*)(malloc((Wosize_val(argv[2])*sizeof(idx_t))));
     get_array_values(argv[2],xadj);
 
     /* Getting adjncy */
-    idx_t *adjncy = (idx_t*)(malloc(sizeof(Wosize_val(argv[3])*sizeof(idx_t))));
+    idx_t *adjncy = (idx_t*)(malloc((Wosize_val(argv[3])*sizeof(idx_t))));
     get_array_values(argv[3],adjncy);
 
     /* Getting vsize */
-    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(argv[5])*sizeof(idx_t))));
+    idx_t *vsize = (idx_t*)(malloc((Wosize_val(argv[5])*sizeof(idx_t))));
     get_array_values(argv[5],vsize);
     
     /* Getting vwgts */
-    idx_t *vwgts = (idx_t*)(malloc(sizeof(Wosize_val(argv[4])*sizeof(idx_t))));
+    idx_t *vwgts = (idx_t*)(malloc((Wosize_val(argv[4])*sizeof(idx_t))));
     get_array_values(argv[4],vwgts);
     
     /* Getting adjwgt */
-    idx_t *adjwt = (idx_t*)(malloc(sizeof(Wosize_val(argv[6])*sizeof(idx_t))));
+    idx_t *adjwt = (idx_t*)(malloc((Wosize_val(argv[6])*sizeof(idx_t))));
     get_array_values(argv[6],adjwt);
     
     /* Getting tpwgt */
-    real_t *tpwgts = (real_t*)(malloc(sizeof(Wosize_val(argv[8])*sizeof(real_t))));
+    real_t *tpwgts = (real_t*)(malloc((Wosize_val(argv[8])*sizeof(real_t))));
     //Check the size
     if (Wosize_val(argv[8]) != (nparts*ncon)) caml_failwith ("Argument 5 size not equal to (arg2 * arg8)");
     get_real_array_values(argv[8],tpwgts);
     
     /* Getting ubvec */
-    real_t *ubvec = (real_t*)(malloc(sizeof(Wosize_val(argv[9])*sizeof(real_t))));
+    real_t *ubvec = (real_t*)(malloc((Wosize_val(argv[9])*sizeof(real_t))));
     //Check the size 
     if (Wosize_val(argv[9]) != ncon) caml_failwith ("Argument 5 size not equal to arg2");
     get_real_array_values(argv[9],ubvec);
@@ -176,35 +170,43 @@ Metis_PartGraphKWayBytecode (value *argv, int argn) {
     /* Use mallocs, because things might overflow!! */
 
     /* Getting xadj */
-    idx_t *xadj = (idx_t*)(malloc(sizeof(Wosize_val(argv[2])*sizeof(idx_t))));
+    idx_t *xadj = (idx_t*)(malloc((Wosize_val(argv[2])*sizeof(idx_t))));
     get_array_values(argv[2],xadj);
 
     /* Getting adjncy */
-    idx_t *adjncy = (idx_t*)(malloc(sizeof(Wosize_val(argv[3])*sizeof(idx_t))));
+    idx_t *adjncy = (idx_t*)(malloc((Wosize_val(argv[3])*sizeof(idx_t))));
     get_array_values(argv[3],adjncy);
 
-    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(argv[5])*sizeof(idx_t))));
+    idx_t *vsize = (idx_t*)(malloc((Wosize_val(argv[5])*sizeof(idx_t))));
+    if (Wosize_val (argv[5]) == 0)
+      vsize = NULL;
     get_array_values(argv[5],vsize);
     
     /* Getting vwgts */
-    idx_t *vwgts = (idx_t*)(malloc(sizeof(Wosize_val(argv[4])*sizeof(idx_t))));
-    get_array_values(argv[4],vwgts);
+    idx_t *vwgts = (idx_t*)(malloc((Wosize_val(argv[4])*sizeof(idx_t))));
+    if (Wosize_val (argv[4]) == 0)
+      vwgts = NULL;
+    else get_array_values(argv[4],vwgts);
     
     /* Getting adjwgt */
-    idx_t *adjwt = (idx_t*)(malloc(sizeof(Wosize_val(argv[6])*sizeof(idx_t))));
+    idx_t *adjwt = (idx_t*)(malloc((Wosize_val(argv[6])*sizeof(idx_t))));
     get_array_values(argv[6],adjwt);
     
     /* Getting tpwgt */
-    real_t *tpwgts = (real_t*)(malloc(sizeof(Wosize_val(argv[8])*sizeof(real_t))));
-    //Check the size
-    if (Wosize_val(argv[8]) != (nparts*ncon)) caml_failwith ("Argument 5 size not equal to (arg2 * arg8)");
-    get_real_array_values(argv[8],tpwgts);
+    real_t *tpwgts = (real_t*)(malloc((Wosize_val(argv[8])*sizeof(real_t))));
+    //Check the size 
+    if (Wosize_val(argv[8]) ==0)
+      tpwgts = NULL;
+    else if (Wosize_val(argv[8]) != (nparts*ncon)) caml_failwith ("Argument 5 size not equal to (arg2 * arg8)");
+    else get_real_array_values(argv[8],tpwgts);
     
     /* Getting ubvec */
-    real_t *ubvec = (real_t*)(malloc(sizeof(Wosize_val(argv[9])*sizeof(real_t))));
+    real_t *ubvec = (real_t*)(malloc((Wosize_val(argv[9])*sizeof(real_t))));
     //Check the size 
-    if (Wosize_val(argv[9]) != ncon) caml_failwith ("Argument 5 size not equal to arg2");
-    get_real_array_values(argv[9],ubvec);
+    if (Wosize_val(argv[9]) ==0)
+      ubvec = NULL;
+    else if (Wosize_val(argv[9]) != ncon) caml_failwith ("Argument 5 size not equal to arg2");
+    else get_real_array_values(argv[9],ubvec);
     
     /* Now make the return array */
     idx_t objval;
@@ -269,35 +271,35 @@ Metis_PartGraphRecursiveNative (value v_nvtxs, value v_cons, value v_xadj, value
     /* Use mallocs, because things might overflow!! */
 
     /* Getting xadj */
-    idx_t *xadj = (idx_t*)(malloc(sizeof(Wosize_val(v_xadj)*sizeof(idx_t))));
+    idx_t *xadj = (idx_t*)(malloc((Wosize_val(v_xadj)*sizeof(idx_t))));
     get_array_values(v_xadj,xadj);
 
     /* Getting adjncy */
-    idx_t *adjncy = (idx_t*)(malloc(sizeof(Wosize_val(v_adjncy)*sizeof(idx_t))));
+    idx_t *adjncy = (idx_t*)(malloc((Wosize_val(v_adjncy)*sizeof(idx_t))));
     get_array_values(v_adjncy,adjncy);
 
     /* Getting vwgts */
-    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(v_vsize)*sizeof(idx_t))));
+    idx_t *vsize = (idx_t*)(malloc((Wosize_val(v_vsize)*sizeof(idx_t))));
     get_array_values(v_vsize,vsize);
 
     /* Getting vwgts */
-    idx_t *vwgts = (idx_t*)(malloc(sizeof(Wosize_val(v_vwgts)*sizeof(idx_t))));
+    idx_t *vwgts = (idx_t*)(malloc((Wosize_val(v_vwgts)*sizeof(idx_t))));
     get_array_values(v_vwgts,vwgts);
     
     /* Getting adjwgt */
-    idx_t *adjwt = (idx_t*)(malloc(sizeof(Wosize_val(v_adjwts)*sizeof(idx_t))));
+    idx_t *adjwt = (idx_t*)(malloc((Wosize_val(v_adjwts)*sizeof(idx_t))));
     get_array_values(v_adjwts,adjwt);
     
     /* Getting tpwgt */
-    real_t* tpwgts = (real_t*)(malloc(sizeof(Wosize_val(v_tpwgts)*sizeof(real_t))));
+    real_t* tpwgts = (real_t*)(malloc((Wosize_val(v_tpwgts)*sizeof(real_t))));
     //Check the size 
     if (Wosize_val(v_tpwgts) != (nparts*ncon)) caml_failwith ("Argument 5 size not equal to (arg2 * arg8)");
     get_real_array_values(v_tpwgts,tpwgts);
     
     /* Getting ubvec */
-    real_t *ubvec = (real_t*)(malloc(sizeof(Wosize_val(v_ubvec)*sizeof(real_t))));
+    real_t *ubvec = (real_t*)(malloc((Wosize_val(v_ubvec)*sizeof(real_t))));
     //Check the size 
-    if (Wosize_val(v_ubvec) != ncon) caml_failwith ("Argument 5 size not equal to arg2");
+    if (Wosize_val(v_ubvec) !=0 && Wosize_val(v_ubvec) != ncon) caml_failwith ("Argument 5 size not equal to arg2");
     get_real_array_values(v_ubvec,ubvec);
     
     /* Now make the return array */
@@ -307,7 +309,7 @@ Metis_PartGraphRecursiveNative (value v_nvtxs, value v_cons, value v_xadj, value
     idx_t *part = (idx_t*)malloc(sizeof(idx_t)*(nvtxs));
     
     /* Now make a call the metis library function */
-    int ret_val = METIS_PartGraphRecursive(&nvtxs,&ncon,xadj,adjncy,vwgts,&vsize,adjwt,&nparts,
+    int ret_val = METIS_PartGraphRecursive(&nvtxs,&ncon,xadj,adjncy,vwgts,vsize,adjwt,&nparts,
 					   tpwgts,ubvec,NULL,&objval,part);
     if (ret_val == METIS_OK){
       /*First free all the allocations that we have done, so that there is no memory leak!! */
@@ -357,41 +359,86 @@ Metis_PartGraphKWayNative (value v_nvtxs, value v_cons, value v_xadj, value v_ad
   idx_t ncon = (idx_t)((Nativeint_val(v_cons)));
   idx_t nparts = (idx_t)((Nativeint_val(v_nparts)));
   
+#ifdef DEBUG
+  fprintf(stdout,"nvtxs: %d, ncon: %d, nparts: %d\n",nvtxs,ncon,nparts);
+#endif
+
   /* Get all the arrays */
   if(Tag_val(v_xadj) == 0 && Tag_val(v_adjncy)==0 && Tag_val(v_vwgts) ==0 && Tag_val(v_adjwts)==0){
     /* Use mallocs, because things might overflow!! */
 
+#ifdef DEBUG
+    fprintf(stdout,"All blocks are OK with their tags!!");
+#endif
+
     /* Getting xadj */
-    idx_t *xadj = (idx_t*)(malloc(sizeof(Wosize_val(v_xadj)*sizeof(idx_t))));
+    idx_t *xadj = (idx_t*) calloc(Wosize_val(v_xadj),sizeof(idx_t));
     get_array_values(v_xadj,xadj);
 
+#ifdef DEBUG
+    int tutu=0;
+    fprintf(stdout, "XADJ FROM C\n");
+    for (tutu=0;tutu<Wosize_val(v_xadj);++tutu)
+      fprintf(stdout, "%d ", xadj[tutu]);
+    fprintf(stdout,"\n");
+#endif
+
     /* Getting adjncy */
-    idx_t *adjncy = (idx_t*)(malloc(sizeof(Wosize_val(v_adjncy)*sizeof(idx_t))));
+    idx_t *adjncy = (idx_t*)(calloc(Wosize_val(v_adjncy),sizeof(idx_t)));
     get_array_values(v_adjncy,adjncy);
 
+    /* Getting adjwgt */
+    idx_t *adjwt = (idx_t*)(calloc(Wosize_val(v_adjwts),sizeof(idx_t)));
+    get_array_values(v_adjwts,adjwt);
+
+#ifdef DEBUG
+    tutu=0;
+    fprintf(stdout, "ADJNCY/ADJWT FROM C\n");
+    for (tutu=0;tutu<Wosize_val(v_adjncy);++tutu)
+      fprintf(stdout, "%d %d ", adjncy[tutu], adjwt[tutu]);
+    fprintf(stdout,"\n");
+#endif
+
     /* Getting vwgts */
-    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(v_vsize)*sizeof(idx_t))));
+    idx_t *vsize = (idx_t*)(calloc(Wosize_val(v_vsize),sizeof(idx_t)));
+    if (Wosize_val (v_vsize) == 0)
+      vsize = NULL;
     get_array_values(v_vsize,vsize);
 
     /* Getting vwgts */
-    idx_t *vwgts = (idx_t*)(malloc(sizeof(Wosize_val(v_vwgts)*sizeof(idx_t))));
-    get_array_values(v_vwgts,vwgts);
+    idx_t *vwgts = (idx_t*)(calloc(Wosize_val(v_vwgts),sizeof(idx_t)));
+    if (Wosize_val (v_vwgts) == 0)
+      vwgts = NULL;
+    else get_array_values(v_vwgts,vwgts);
     
-    /* Getting adjwgt */
-    idx_t *adjwt = (idx_t*)(malloc(sizeof(Wosize_val(v_adjwts)*sizeof(idx_t))));
-    get_array_values(v_adjwts,adjwt);
+#ifdef DEBUG
+    tutu=0;
+    fprintf(stdout, "VWGTS FROM C\n");
+    for (tutu=0;tutu<Wosize_val(v_vwgts);++tutu)
+      fprintf(stdout, "%d ", vwgts[tutu]);
+    fprintf(stdout,"\n");
+#endif
+
     
     /* Getting tpwgt */
-    real_t* tpwgts = (real_t*)(malloc(sizeof(Wosize_val(v_tpwgts)*sizeof(real_t))));
+    real_t* tpwgts = (real_t*)(calloc(Wosize_val(v_tpwgts),sizeof(real_t)));
     //Check the size 
-    if (Wosize_val(v_tpwgts) != (nparts*ncon)) caml_failwith ("Argument 5 size not equal to (arg2 * arg8)");
-    get_real_array_values(v_tpwgts,tpwgts);
+    if (Wosize_val(v_tpwgts) ==0)
+      tpwgts = NULL;
+    else if (Wosize_val(v_tpwgts) != (nparts*ncon)) caml_failwith ("Argument 5 size not equal to (arg2 * arg8)");
+    else get_real_array_values(v_tpwgts,tpwgts);
+    
+#ifdef DEBUG
+    /* print all the values that have been allocated!! */
+#endif
     
     /* Getting ubvec */
-    real_t *ubvec = (real_t*)(malloc(sizeof(Wosize_val(v_ubvec)*sizeof(real_t))));
+    real_t *ubvec = (real_t*)(calloc(Wosize_val(v_ubvec),sizeof(real_t)));
     //Check the size 
-    if (Wosize_val(v_ubvec) != ncon) caml_failwith ("Argument 5 size not equal to arg2");
-    get_real_array_values(v_ubvec,ubvec);
+    if (Wosize_val(v_ubvec) ==0)
+      ubvec = NULL;
+    else if (Wosize_val (v_ubvec) != 0 && Wosize_val(v_ubvec) != ncon) caml_failwith ("Argument 5 size not equal to arg2");
+    else get_real_array_values(v_ubvec,ubvec);
     
     /* Now make the return array */
     idx_t objval;
@@ -400,6 +447,7 @@ Metis_PartGraphKWayNative (value v_nvtxs, value v_cons, value v_xadj, value v_ad
     idx_t *part = (idx_t*)malloc(sizeof(idx_t)*(nvtxs));
     
     /* Now make a call the metis library function */
+    /* First set all the ones with */
     int ret_val = METIS_PartGraphKway(&nvtxs,&ncon,xadj,adjncy,vwgts,vsize,adjwt,&nparts,
 					   tpwgts,ubvec,NULL,&objval,part);
     if (ret_val == METIS_OK){
@@ -467,23 +515,23 @@ Metis_PartMeshDualByteCode (value *argv, int argn) {
     /* Use mallocs, because things might overflow!! */
 
     /* Getting xadj */
-    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(argv[5])*sizeof(idx_t))));
+    idx_t *vsize = (idx_t*)(malloc((Wosize_val(argv[5])*sizeof(idx_t))));
     get_array_values(argv[5],vsize);
 
     /* Getting adjncy */
-    idx_t *eptr = (idx_t*)(malloc(sizeof(Wosize_val(argv[2])*sizeof(idx_t))));
+    idx_t *eptr = (idx_t*)(malloc((Wosize_val(argv[2])*sizeof(idx_t))));
     get_array_values(argv[2],eptr);
 
     /* Getting vwgts */
-    idx_t *eind = (idx_t*)(malloc(sizeof(Wosize_val(argv[3])*sizeof(idx_t))));
+    idx_t *eind = (idx_t*)(malloc((Wosize_val(argv[3])*sizeof(idx_t))));
     get_array_values(argv[3],eind);
     
     /* Getting adjwgt */
-    idx_t *vwgt = (idx_t*)(malloc(sizeof(Wosize_val(argv[4])*sizeof(idx_t))));
+    idx_t *vwgt = (idx_t*)(malloc((Wosize_val(argv[4])*sizeof(idx_t))));
     get_array_values(argv[4],vwgt);
     
     /* Getting tpwgt */
-    real_t* tpwgts = (real_t*)(malloc(sizeof(Wosize_val(argv[8])*sizeof(real_t))));
+    real_t* tpwgts = (real_t*)(malloc((Wosize_val(argv[8])*sizeof(real_t))));
     //Check the size
     if (Wosize_val(argv[8]) != nparts) caml_failwith ("Argument 9 size not equal to arg8");
     get_real_array_values(argv[8],tpwgts);
@@ -556,23 +604,23 @@ Metis_PartMeshDualNative (value v_ne, value v_nn, value v_eptr, value v_eind,
     /* Use mallocs, because things might overflow!! */
 
     /* Getting xadj */
-    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(v_vsize)*sizeof(idx_t))));
+    idx_t *vsize = (idx_t*)(malloc((Wosize_val(v_vsize)*sizeof(idx_t))));
     get_array_values(v_vsize,vsize);
 
     /* Getting adjncy */
-    idx_t *eptr = (idx_t*)(malloc(sizeof(Wosize_val(v_eptr)*sizeof(idx_t))));
+    idx_t *eptr = (idx_t*)(malloc((Wosize_val(v_eptr)*sizeof(idx_t))));
     get_array_values(v_eptr,eptr);
 
     /* Getting vwgts */
-    idx_t *eind = (idx_t*)(malloc(sizeof(Wosize_val(v_eind)*sizeof(idx_t))));
+    idx_t *eind = (idx_t*)(malloc((Wosize_val(v_eind)*sizeof(idx_t))));
     get_array_values(v_eind,eind);
     
     /* Getting adjwgt */
-    idx_t *vwgt = (idx_t*)(malloc(sizeof(Wosize_val(v_vwgt)*sizeof(idx_t))));
+    idx_t *vwgt = (idx_t*)(malloc((Wosize_val(v_vwgt)*sizeof(idx_t))));
     get_array_values(v_vwgt,vwgt);
     
     /* Getting tpwgt */
-    real_t* tpwgts = (real_t*)(malloc(sizeof(Wosize_val(v_tpwgts)*sizeof(real_t))));
+    real_t* tpwgts = (real_t*)(malloc((Wosize_val(v_tpwgts)*sizeof(real_t))));
     //Check the size
     if (Wosize_val(v_tpwgts) != nparts) caml_failwith ("Argument 9 size not equal to arg8");
     get_real_array_values(v_tpwgts,tpwgts);
@@ -645,23 +693,23 @@ Metis_PartMeshNodalNative (value v_ne, value v_nn, value v_eptr, value v_eind,
     /* Use mallocs, because things might overflow!! */
 
     /* Getting xadj */
-    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(v_vsize)*sizeof(idx_t))));
+    idx_t *vsize = (idx_t*)(malloc((Wosize_val(v_vsize)*sizeof(idx_t))));
     get_array_values(v_vsize,vsize);
 
     /* Getting adjncy */
-    idx_t *eptr = (idx_t*)(malloc(sizeof(Wosize_val(v_eptr)*sizeof(idx_t))));
+    idx_t *eptr = (idx_t*)(malloc((Wosize_val(v_eptr)*sizeof(idx_t))));
     get_array_values(v_eptr,eptr);
 
     /* Getting vwgts */
-    idx_t *eind = (idx_t*)(malloc(sizeof(Wosize_val(v_eind)*sizeof(idx_t))));
+    idx_t *eind = (idx_t*)(malloc((Wosize_val(v_eind)*sizeof(idx_t))));
     get_array_values(v_eind,eind);
     
     /* Getting adjwgt */
-    idx_t *vwgt = (idx_t*)(malloc(sizeof(Wosize_val(v_vwgt)*sizeof(idx_t))));
+    idx_t *vwgt = (idx_t*)(malloc((Wosize_val(v_vwgt)*sizeof(idx_t))));
     get_array_values(v_vwgt,vwgt);
     
     /* Getting tpwgt */
-    real_t* tpwgts = (real_t*)(malloc(sizeof(Wosize_val(v_tpwgts)*sizeof(real_t))));
+    real_t* tpwgts = (real_t*)(malloc((Wosize_val(v_tpwgts)*sizeof(real_t))));
     //Check the size
     if (Wosize_val(v_tpwgts) != nparts) caml_failwith ("Argument 9 size not equal to arg8");
     get_real_array_values(v_tpwgts,tpwgts);
@@ -742,23 +790,23 @@ Metis_PartMeshNodalByteCode (value *argv, int argn) {
     /* Use mallocs, because things might overflow!! */
 
     /* Getting xadj */
-    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(argv[5])*sizeof(idx_t))));
+    idx_t *vsize = (idx_t*)(malloc((Wosize_val(argv[5])*sizeof(idx_t))));
     get_array_values(argv[5],vsize);
 
     /* Getting adjncy */
-    idx_t *eptr = (idx_t*)(malloc(sizeof(Wosize_val(argv[2])*sizeof(idx_t))));
+    idx_t *eptr = (idx_t*)(malloc((Wosize_val(argv[2])*sizeof(idx_t))));
     get_array_values(argv[2],eptr);
 
     /* Getting vwgts */
-    idx_t *eind = (idx_t*)(malloc(sizeof(Wosize_val(argv[3])*sizeof(idx_t))));
+    idx_t *eind = (idx_t*)(malloc((Wosize_val(argv[3])*sizeof(idx_t))));
     get_array_values(argv[3],eind);
     
     /* Getting adjwgt */
-    idx_t *vwgt = (idx_t*)(malloc(sizeof(Wosize_val(argv[4])*sizeof(idx_t))));
+    idx_t *vwgt = (idx_t*)(malloc((Wosize_val(argv[4])*sizeof(idx_t))));
     get_array_values(argv[4],vwgt);
     
     /* Getting tpwgt */
-    real_t* tpwgts = (real_t*)(malloc(sizeof(Wosize_val(argv[8])*sizeof(real_t))));
+    real_t* tpwgts = (real_t*)(malloc((Wosize_val(argv[8])*sizeof(real_t))));
     //Check the size
     if (Wosize_val(argv[7]) != nparts) caml_failwith ("Argument 9 size not equal to arg8");
     get_real_array_values(argv[7],tpwgts);
@@ -818,13 +866,13 @@ Metis_NodeND (value v_nvtx, value v_xadj, value v_adjncy, value v_vwgts){
   idx_t nvtxs = (idx_t)((Nativeint_val(v_nvtx)));
   if(Tag_val(v_xadj) == 0 && Tag_val(v_adjncy)==0 && Tag_val(v_vwgts) ==0 ){
     /* Getting xadj */
-    idx_t *xadj = (idx_t*)(malloc(sizeof(Wosize_val(v_xadj)*sizeof(idx_t))));
+    idx_t *xadj = (idx_t*)(malloc((Wosize_val(v_xadj)*sizeof(idx_t))));
     get_array_values(v_xadj,xadj);
     /* Getting adjncy */
-    idx_t *adjncy = (idx_t*)(malloc(sizeof(Wosize_val(v_adjncy)*sizeof(idx_t))));
+    idx_t *adjncy = (idx_t*)(malloc((Wosize_val(v_adjncy)*sizeof(idx_t))));
     get_array_values(v_adjncy,adjncy);
     /* Getting vwgts */
-    idx_t *vwgts = (idx_t*)(malloc(sizeof(Wosize_val(v_vwgts)*sizeof(idx_t))));
+    idx_t *vwgts = (idx_t*)(malloc((Wosize_val(v_vwgts)*sizeof(idx_t))));
     get_array_values(v_vwgts,vwgts);
     
     idx_t *perm = (idx_t*)malloc(nvtxs*sizeof(idx_t));
