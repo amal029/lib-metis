@@ -18,16 +18,18 @@ lib-metis.cma:
 	$(CC) -c metis.ml
 	$(CC) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBB) -c metisCodegen.ml
 	$(CC) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBB) -c metisParser.ml
+	$(CC) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBB) -c metisAdjacency.ml
 	$(CC) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBB) -c metisDriver.ml
-	$(CC) -a -custom metisParser.cmo metisCodegen.cmo metisDriver.cmo \
+	$(CC) -a -custom metisParser.cmo metisCodegen.cmo metisAdjacency.cmo metisDriver.cmo \
 	-I $(METISLDIR) -cclib -l$(METISLIB) -o $@
 
 lib-metis.cmxa:
 	$(CCOPT) -c metis.ml
 	$(CCOPT) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBBOPT) -c metisCodegen.ml
 	$(CCOPT) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBBOPT) -c metisParser.ml
+	$(CCOPT) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBBOPT) -c metisAdjacency.ml
 	$(CCOPT) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBBOPT) -c metisDriver.ml
-	$(CCOPT) -a metisParser.cmx metisCodegen.cmx metisDriver.cmx \
+	$(CCOPT) -a metisParser.cmx metisCodegen.cmx metisAdjacency.cmx metisDriver.cmx \
 	-I $(METISLDIR) -cclib -l$(METISLIB) -o $@
 
 

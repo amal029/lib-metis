@@ -167,3 +167,4 @@ let get_format file =
   build_metis_graph nodes 0 nodes.(0)
   with
     | Sys_error x -> raise (Error x)
+    | _ -> raise (Error "Format and constraints both need to be specified in full in the metis file")

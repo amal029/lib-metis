@@ -79,7 +79,6 @@ Metis_PartGraphRecursiveBytecode (value *argv, int argn) {
   idx_t nvtxs = (idx_t)((Nativeint_val(argv[0])));
   idx_t ncon = (idx_t)((Nativeint_val(argv[1])));
   idx_t nparts = (idx_t)((Nativeint_val(argv[7])));
-  idx_t vsize = (idx_t)((Nativeint_val(argv[5])));
   
   /* Get all the arrays */
   if(Tag_val(argv[2]) == 0 && Tag_val(argv[3])==0 && Tag_val(argv[4]) ==0 && Tag_val(argv[6])==0){
@@ -93,6 +92,10 @@ Metis_PartGraphRecursiveBytecode (value *argv, int argn) {
     idx_t *adjncy = (idx_t*)(malloc(sizeof(Wosize_val(argv[3])*sizeof(idx_t))));
     get_array_values(argv[3],adjncy);
 
+    /* Getting vsize */
+    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(argv[5])*sizeof(idx_t))));
+    get_array_values(argv[5],vsize);
+    
     /* Getting vwgts */
     idx_t *vwgts = (idx_t*)(malloc(sizeof(Wosize_val(argv[4])*sizeof(idx_t))));
     get_array_values(argv[4],vwgts);
@@ -120,7 +123,7 @@ Metis_PartGraphRecursiveBytecode (value *argv, int argn) {
     idx_t *part = (idx_t*)malloc(sizeof(idx_t)*(nvtxs));
     
     /* Now make a call the metis library function */
-    int ret_val = METIS_PartGraphRecursive(&nvtxs,&ncon,xadj,adjncy,vwgts,&vsize,adjwt,&nparts,
+    int ret_val = METIS_PartGraphRecursive(&nvtxs,&ncon,xadj,adjncy,vwgts,vsize,adjwt,&nparts,
 					   tpwgts,ubvec,NULL,&objval,part);
     if (ret_val == METIS_OK){
       /*First free all the allocations that we have done, so that there is no memory leak!! */
@@ -167,7 +170,6 @@ Metis_PartGraphKWayBytecode (value *argv, int argn) {
   idx_t nvtxs = (idx_t)((Nativeint_val(argv[0])));
   idx_t ncon = (idx_t)((Nativeint_val(argv[1])));
   idx_t nparts = (idx_t)((Nativeint_val(argv[7])));
-  idx_t vsize = (idx_t)((Nativeint_val(argv[5])));
   
   /* Get all the arrays */
   if(Tag_val(argv[2]) == 0 && Tag_val(argv[3])==0 && Tag_val(argv[4]) ==0 && Tag_val(argv[6])==0){
@@ -181,6 +183,9 @@ Metis_PartGraphKWayBytecode (value *argv, int argn) {
     idx_t *adjncy = (idx_t*)(malloc(sizeof(Wosize_val(argv[3])*sizeof(idx_t))));
     get_array_values(argv[3],adjncy);
 
+    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(argv[5])*sizeof(idx_t))));
+    get_array_values(argv[5],vsize);
+    
     /* Getting vwgts */
     idx_t *vwgts = (idx_t*)(malloc(sizeof(Wosize_val(argv[4])*sizeof(idx_t))));
     get_array_values(argv[4],vwgts);
@@ -208,7 +213,7 @@ Metis_PartGraphKWayBytecode (value *argv, int argn) {
     idx_t *part = (idx_t*)malloc(sizeof(idx_t)*(nvtxs));
     
     /* Now make a call the metis library function */
-    int ret_val = METIS_PartGraphKWay(&nvtxs,&ncon,xadj,adjncy,vwgts,&vsize,adjwt,&nparts,
+    int ret_val = METIS_PartGraphKway(&nvtxs,&ncon,xadj,adjncy,vwgts,vsize,adjwt,&nparts,
 					   tpwgts,ubvec,NULL,&objval,part);
     if (ret_val == METIS_OK){
       /*First free all the allocations that we have done, so that there is no memory leak!! */
@@ -258,8 +263,6 @@ Metis_PartGraphRecursiveNative (value v_nvtxs, value v_cons, value v_xadj, value
   idx_t nvtxs = (idx_t)((Nativeint_val(v_nvtxs)));
   idx_t ncon = (idx_t)((Nativeint_val(v_cons)));
   idx_t nparts = (idx_t)((Nativeint_val(v_nparts)));
-  /*FIXME: Is this really a primitive type, or an array type ??*/
-  idx_t vsize = (idx_t)((Nativeint_val(v_vsize)));
   
   /* Get all the arrays */
   if(Tag_val(v_xadj) == 0 && Tag_val(v_adjncy)==0 && Tag_val(v_vwgts) ==0 && Tag_val(v_adjwts)==0){
@@ -272,6 +275,10 @@ Metis_PartGraphRecursiveNative (value v_nvtxs, value v_cons, value v_xadj, value
     /* Getting adjncy */
     idx_t *adjncy = (idx_t*)(malloc(sizeof(Wosize_val(v_adjncy)*sizeof(idx_t))));
     get_array_values(v_adjncy,adjncy);
+
+    /* Getting vwgts */
+    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(v_vsize)*sizeof(idx_t))));
+    get_array_values(v_vsize,vsize);
 
     /* Getting vwgts */
     idx_t *vwgts = (idx_t*)(malloc(sizeof(Wosize_val(v_vwgts)*sizeof(idx_t))));
@@ -349,8 +356,6 @@ Metis_PartGraphKWayNative (value v_nvtxs, value v_cons, value v_xadj, value v_ad
   idx_t nvtxs = (idx_t)((Nativeint_val(v_nvtxs)));
   idx_t ncon = (idx_t)((Nativeint_val(v_cons)));
   idx_t nparts = (idx_t)((Nativeint_val(v_nparts)));
-  /*FIXME: Is this really a primitive type, or an array type ??*/
-  idx_t vsize = (idx_t)((Nativeint_val(v_vsize)));
   
   /* Get all the arrays */
   if(Tag_val(v_xadj) == 0 && Tag_val(v_adjncy)==0 && Tag_val(v_vwgts) ==0 && Tag_val(v_adjwts)==0){
@@ -363,6 +368,10 @@ Metis_PartGraphKWayNative (value v_nvtxs, value v_cons, value v_xadj, value v_ad
     /* Getting adjncy */
     idx_t *adjncy = (idx_t*)(malloc(sizeof(Wosize_val(v_adjncy)*sizeof(idx_t))));
     get_array_values(v_adjncy,adjncy);
+
+    /* Getting vwgts */
+    idx_t *vsize = (idx_t*)(malloc(sizeof(Wosize_val(v_vsize)*sizeof(idx_t))));
+    get_array_values(v_vsize,vsize);
 
     /* Getting vwgts */
     idx_t *vwgts = (idx_t*)(malloc(sizeof(Wosize_val(v_vwgts)*sizeof(idx_t))));
@@ -391,7 +400,7 @@ Metis_PartGraphKWayNative (value v_nvtxs, value v_cons, value v_xadj, value v_ad
     idx_t *part = (idx_t*)malloc(sizeof(idx_t)*(nvtxs));
     
     /* Now make a call the metis library function */
-    int ret_val = METIS_PartGraphKWay(&nvtxs,&ncon,xadj,adjncy,vwgts,&vsize,adjwt,&nparts,
+    int ret_val = METIS_PartGraphKway(&nvtxs,&ncon,xadj,adjncy,vwgts,vsize,adjwt,&nparts,
 					   tpwgts,ubvec,NULL,&objval,part);
     if (ret_val == METIS_OK){
       /*First free all the allocations that we have done, so that there is no memory leak!! */
@@ -492,14 +501,14 @@ Metis_PartMeshDualByteCode (value *argv, int argn) {
 				     &objval,epart,npart);
     if (ret_val == METIS_OK){
       /*First free all the allocations that we have done, so that there is no memory leak!! */
-      free (eprt);
+      free (epart);
       free (eind);
       free (vwgt);
       free (tpwgts);
 
       /* Now we want to make the tuple that returns the value back in to Ocaml's heap space */
       /* DRAGON: This tuple will be garbage collected by the Ocaml GC!! */
-      CAMLlocal3(ret_objval,ret_part,ret_tuple);
+      CAMLlocal4(ret_objval,ret_epart,ret_tuple,ret_npart);
       ret_objval = caml_copy_nativeint (objval); //The objective value to be sent back
       ret_epart = caml_alloc (ne,0); //The npart array (snd ret_tuple)
       ret_npart = caml_alloc (nn,0); //The npart array (snd ret_tuple)
@@ -581,14 +590,14 @@ Metis_PartMeshDualNative (value v_ne, value v_nn, value v_eptr, value v_eind,
 				     &objval,epart,npart);
     if (ret_val == METIS_OK){
       /*First free all the allocations that we have done, so that there is no memory leak!! */
-      free (eprt);
+      free (epart);
       free (eind);
       free (vwgt);
       free (tpwgts);
 
       /* Now we want to make the tuple that returns the value back in to Ocaml's heap space */
       /* DRAGON: This tuple will be garbage collected by the Ocaml GC!! */
-      CAMLlocal3(ret_objval,ret_part,ret_tuple);
+      CAMLlocal4(ret_objval,ret_epart,ret_tuple,ret_npart);
       ret_objval = caml_copy_nativeint (objval); //The objective value to be sent back
       ret_epart = caml_alloc (ne,0); //The npart array (snd ret_tuple)
       ret_npart = caml_alloc (nn,0); //The npart array (snd ret_tuple)
@@ -624,7 +633,7 @@ Metis_PartMeshNodalNative (value v_ne, value v_nn, value v_eptr, value v_eind,
 				value v_tpwgts) {
 
   CAMLparam5(v_ne,v_nn,v_eptr,v_eind,v_vwgt);
-  CAMLxparam4(v_vsize,v_nparts,v_tpwgts);
+  CAMLxparam3(v_vsize,v_nparts,v_tpwgts);
 
   /* First get the int values */
   idx_t ne = (idx_t)((Nativeint_val(v_ne)));
@@ -677,7 +686,7 @@ Metis_PartMeshNodalNative (value v_ne, value v_nn, value v_eptr, value v_eind,
 
       /* Now we want to make the tuple that returns the value back in to Ocaml's heap space */
       /* DRAGON: This tuple will be garbage collected by the Ocaml GC!! */
-      CAMLlocal3(ret_objval,ret_part,ret_tuple);
+      CAMLlocal4(ret_objval,ret_epart,ret_tuple,ret_npart);
       ret_objval = caml_copy_nativeint (objval); //The objective value to be sent back
       ret_epart = caml_alloc (ne,0); //The npart array (snd ret_tuple)
       ret_npart = caml_alloc (nn,0); //The npart array (snd ret_tuple)
@@ -774,7 +783,7 @@ Metis_PartMeshNodalByteCode (value *argv, int argn) {
 
       /* Now we want to make the tuple that returns the value back in to Ocaml's heap space */
       /* DRAGON: This tuple will be garbage collected by the Ocaml GC!! */
-      CAMLlocal3(ret_objval,ret_part,ret_tuple);
+      CAMLlocal4(ret_objval,ret_epart,ret_tuple,ret_npart);
       ret_objval = caml_copy_nativeint (objval); //The objective value to be sent back
       ret_epart = caml_alloc (ne,0); //The npart array (snd ret_tuple)
       ret_npart = caml_alloc (nn,0); //The npart array (snd ret_tuple)
@@ -804,10 +813,10 @@ Metis_PartMeshNodalByteCode (value *argv, int argn) {
 }
 
 value
-Metis_NodeND (value v_nvtx, value v_xadj, value v_adjncy, value v_vwgt){
-  CAMLparam4 (v_nvtx,v_xadj,v_adjncy,v_vwgt);
+Metis_NodeND (value v_nvtx, value v_xadj, value v_adjncy, value v_vwgts){
+  CAMLparam4 (v_nvtx,v_xadj,v_adjncy,v_vwgts);
   idx_t nvtxs = (idx_t)((Nativeint_val(v_nvtx)));
-  if(Tag_val(v_xadj) == 0 && Tag_val(v_adjncy)==0 && Tag_val(v_vwgt) ==0 ){
+  if(Tag_val(v_xadj) == 0 && Tag_val(v_adjncy)==0 && Tag_val(v_vwgts) ==0 ){
     /* Getting xadj */
     idx_t *xadj = (idx_t*)(malloc(sizeof(Wosize_val(v_xadj)*sizeof(idx_t))));
     get_array_values(v_xadj,xadj);
