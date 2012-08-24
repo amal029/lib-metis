@@ -1,6 +1,6 @@
 (* This test parses a metis file format and prints out the results *)
 
-let file = "../examples/jacobi2D.our.grf" in
+let file = "../examples/matmul.our.grf" in
 (* let top_node = MetisDriver.parse_metis_file file in *)
 (* Print the parsed file !! *)
 (* let () = MetisPrint.print top_node in *)
