@@ -12,7 +12,7 @@ GCC=clang
 all: clean metis lib-metis.cma lib-metis.cmxa
 
 metis:
-	$(GCC) -O3 -c -I$(METISIDIR) -I$(OCAMLDIR) metis_stubs.c -o metis_stubs.o
+	$(GCC) -DDEBUG -g -O3 -c -I$(METISIDIR) -I$(OCAMLDIR) metis_stubs.c -o metis_stubs.o
 
 lib-metis.cma:
 	$(CC) -c metis.ml
