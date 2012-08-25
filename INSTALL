@@ -1,0 +1,5 @@
+Change the Makefiles in all directories to point to the right location
+
+run:  make clean && make
+
+
