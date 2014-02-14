@@ -3,13 +3,15 @@ BATLIBB=batteries.cma
 BATLIBBOPT=batteries.cmxa
 CC=ocamlc
 CCOPT=ocamlopt
+METISIDIR=/usr/include
+METISLDIR=/usr/lib/x86_64-linux-gnu/
 METISLIB=metis
-GCC=gcc
+GCC=@CC@
 
 all: clean metis lib-metis.cma lib-metis.cmxa
 
 metis:
-	$(GCC) -O3 -c metis_stubs.c -o metis_stubs.o
+	$(GCC) -O3 -c -I$(METISIDIR) metis_stubs.c -o metis_stubs.o
 
 lib-metis.cma:
 	$(CC) -c metis.ml
@@ -18,7 +20,7 @@ lib-metis.cma:
 	$(CC) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBB) -c metisAdjacency.ml
 	$(CC) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBB) -c metisDriver.ml
 	$(CC) -a -custom metisParser.cmo metisCodegen.cmo metisAdjacency.cmo metisDriver.cmo \
-	-cclib -l$(METISLIB) -o $@
+	-I $(METISLDIR) -cclib -l$(METISLIB) -o $@
 
 lib-metis.cmxa:
 	$(CCOPT) -c metis.ml
@@ -27,7 +29,7 @@ lib-metis.cmxa:
 	$(CCOPT) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBBOPT) -c metisAdjacency.ml
 	$(CCOPT) -pp "camlp4o pa_macro.cmo -UDEBUG" -I $(BATTERIES) $(BATLIBBOPT) -c metisDriver.ml
 	$(CCOPT) -a metisParser.cmx metisCodegen.cmx metisAdjacency.cmx metisDriver.cmx \
-	-cclib -l$(METISLIB) -o $@
+	-I $(METISLDIR) -cclib -l$(METISLIB) -o $@
 
 
 clean:

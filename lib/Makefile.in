@@ -4,12 +4,12 @@ BATLIBBOPT=batteries.cmxa
 CC=ocamlc
 CCOPT=ocamlopt
 METISLIB=metis
-GCC=gcc
+GCC=@CC@
 
 all: clean metis lib-metis.cma lib-metis.cmxa
 
 metis:
-	$(GCC) -O3 -c metis_stubs.c -o metis_stubs.o
+	$(GCC) -O3 -c -I$(METISIDIR) metis_stubs.c -o metis_stubs.o
 
 lib-metis.cma:
 	$(CC) -c metis.ml
