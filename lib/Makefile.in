@@ -31,4 +31,4 @@ lib-metis.cmxa:
 
 
 clean:
-	rm -rf *.cmo *.cmx *.cma *.cmxa *.o *.a *.cmi Makefile
+	rm -rf *.cmo *.cmx *.cma *.cmxa *.o *.a *.cmi
